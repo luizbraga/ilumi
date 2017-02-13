@@ -1,0 +1,36 @@
+version: '2'
+
+volumes:
+    database_data_dev: {}
+    database_backup_dev: {}
+
+services:
+
+    database:
+        image: mongo:latest
+        restart: on-failure
+        container_name: database
+        env_file:
+            - ./docker_build/env/dev
+        volumes:
+            - database_backup_dev:/backups
+        expose:
+          - 27017
+        ports:
+          - 27017:27017
+
+    ilumi_captura:
+        image: ilumi_captura
+        container_name: ilumi_captura
+        command: /bin/bash
+        build:
+            context: .
+            dockerfile: ./docker_build/crawler/Dockerfile
+        depends_on:
+            - database
+        env_file:
+            - ./docker_build/env/dev
+        volumes:
+            - .:/app
+        links:
+            - database

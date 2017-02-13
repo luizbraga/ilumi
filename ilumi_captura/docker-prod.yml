@@ -1,0 +1,59 @@
+version: '2'
+
+volumes:
+    scrapyd_logs: {}
+    scrapyd_queue_data: {}
+
+services:
+
+    database:
+        image: mongo:latest
+        restart: on-failure
+        container_name: database
+        env_file:
+            - ./docker_build/env/prod
+        volumes:
+            - scrapyd_queue_data:/data/db/
+        expose:
+          - 27017
+
+    scrapyd:
+        image: ilumi_scrapyd
+        build:
+            context: .
+            dockerfile: ./docker_build/scrapyd/Dockerfile
+        container_name: scrapyd
+        links:
+            - database
+        volumes:
+            - scrapyd_logs:/scrapyd/logs/
+        env_file:
+            - ./docker_build/env/prod
+        expose:
+            - 6800
+
+    nginx:
+        image: tribunais_nginx
+        build: ./docker_build/nginx
+        container_name: nginx
+        links:
+            - scrapyd
+        ports:
+            - 80:80
+
+    crawler:
+        image: crawler_ilumi
+        restart: 'no'
+        user: root
+        container_name: crawler
+        command: scrapyd-deploy docker
+        build:
+            context: .
+            dockerfile: ./docker_build/crawler/Dockerfile
+        depends_on:
+            - database
+        env_file:
+            - ./docker_build/env/prod
+        links:
+            - database
+            - scrapyd

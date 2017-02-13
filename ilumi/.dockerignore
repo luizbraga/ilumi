@@ -1,0 +1,13 @@
+environ/
+nginx/
+data/
+htmlcov/
+
+.cache/
+
+Dockerfile
+
+*.yml
+*.pyc
+.git
+.coverage

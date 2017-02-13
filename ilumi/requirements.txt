@@ -1,0 +1,29 @@
+# Misc tools
+cython==0.24
+
+# Tornado
+tornado==4.3
+uvloop==0.4.30
+
+# Core
+numpy==1.11.0
+scikit-learn==0.17.1
+scipy==0.16.1
+sklearn==0.0
+statistics==1.0.3.5
+
+# Graphs
+# matplotlib==1.5.1
+
+# Database
+pymongo==3.3.1
+
+# Testing
+pytest==2.9.0
+pytest-cov==2.2.1
+pytest-xdist==1.14
+pytest-runner==2.7.1
+
+# Debug
+ipdb==0.9.0
+gevent==1.1.1

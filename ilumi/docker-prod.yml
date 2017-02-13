@@ -1,0 +1,37 @@
+---
+
+version: '2'
+services:
+
+    database:
+        image: mongo:latest
+        container_name: mongodb
+        ports:
+            - 127.0.0.1::27017
+        env_file:
+            - docker_build/env/prod
+
+    nginx:
+        build: ./docker_build/nginx
+        container_name: nginx
+        links:
+            - web
+        ports:
+            - 80:80
+
+    web:
+        image: tribunais_ws
+        build:
+            context: .
+            dockerfile: ./docker_build/application/Dockerfile
+        container_name: web
+        restart: always
+        command: python manage.py runserver
+        expose:
+            - 5000
+        volumes:
+            - /home/data/:/usr/src/app/data/
+        links:
+            - rabbitmq
+        env_file:
+            - docker_build/env/prod
